@@ -33,7 +33,6 @@ use core_privacy\local\metadata\collection;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\provider {
-
     /**
      * Returns meta data about this plugin's data storage.
      *
