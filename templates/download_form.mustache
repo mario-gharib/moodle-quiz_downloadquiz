@@ -8,19 +8,11 @@
 
     Moodle is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Moodle. If not, see <https://www.gnu.org/licenses/>.
-}}
-
-{{!
-    Template for quiz_downloadquiz plugin
-    
-    @package   quiz_downloadquiz
-    @copyright 2026 Center for Digital Innovation and Artificial Intelligence <moodle.cinia@usj.edu.lb>
-    @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 
 {{!
@@ -28,15 +20,33 @@
 
     Download form for quiz_downloadquiz.
 
-    Context variables:
-    * actionurl
-    * cmid
-    * sesskey
-    * label
-    * placeholder
-    * generateicon
-    * showicon
-    * downloadlabel
+    Context variables required for this template:
+    * actionurl - Form action URL.
+    * cmid - Course module id.
+    * sesskey - Moodle session key.
+    * label - Field label HTML.
+    * placeholder - Input placeholder.
+    * generatelabel - Generate button label.
+    * showlabel - Show key button label.
+    * hidelabel - Hide key button label.
+    * downloadlabel - Submit button label.
+    * generateicon - Generate icon HTML.
+    * showicon - Show icon HTML.
+
+    Example context (json):
+    {
+        "actionurl": "https://example.com/mod/quiz/report.php",
+        "cmid": 12,
+        "sesskey": "abc123",
+        "label": "PDF access key",
+        "placeholder": "6-character access key",
+        "generatelabel": "Generate access key",
+        "showlabel": "Show access key",
+        "hidelabel": "Hide access key",
+        "downloadlabel": "Send quiz as PDF by email",
+        "generateicon": "<span class=\"icon\">↻</span>",
+        "showicon": "<span class=\"icon\">👁</span>"
+    }
 }}
 
 <form method="post" action="{{actionurl}}" class="quiz-downloadquiz-form" novalidate="novalidate">
