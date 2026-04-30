@@ -8,19 +8,18 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Create or repair the required timed-access role for quiz_downloadquiz.
  *
- * @package     quiz_downloadquiz
- * @copyright   2026 Center for Digital Innovation and Artificial Intelligence
- * @author      Center for Digital Innovation and Artificial Intelligence
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_downloadquiz
+ * @copyright 2026 Center for Digital Innovation and Artificial Intelligence <moodle.cinia@usj.edu.lb>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../../../config.php');
@@ -37,14 +36,14 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('createrequiredrole', 'quiz_downloadquiz'));
 $PAGE->set_heading(get_string('createrequiredrole', 'quiz_downloadquiz'));
 
-$roledefinition = get_required_role_definition();
+$roledefinition = quiz_downloadquiz_get_required_role_definition();
 $returnurl = new moodle_url('/admin/settings.php', ['section' => 'modsettingsquizcatdownloadquiz']);
 
 $grantmanager = new \quiz_downloadquiz\local\grant_manager();
 $existingrole = $DB->get_record('role', ['shortname' => $roledefinition->shortname], '*', IGNORE_MISSING);
 
 if ($existingrole) {
-    update_required_role($existingrole, $roledefinition, $systemcontext, $grantmanager);
+    quiz_downloadquiz_update_required_role($existingrole, $roledefinition, $systemcontext, $grantmanager);
 
     redirect(
         $returnurl,
@@ -54,7 +53,7 @@ if ($existingrole) {
     );
 }
 
-create_required_role($roledefinition, $systemcontext, $grantmanager);
+quiz_downloadquiz_create_required_role($roledefinition, $systemcontext, $grantmanager);
 
 redirect(
     $returnurl,
@@ -68,7 +67,7 @@ redirect(
  *
  * @return stdClass
  */
-function get_required_role_definition(): stdClass {
+function quiz_downloadquiz_get_required_role_definition(): stdClass {
     $definition = new stdClass();
     $definition->shortname = 'downloadquizaccess';
     $definition->name = 'Download Quiz PDF Access';
@@ -85,7 +84,7 @@ function get_required_role_definition(): stdClass {
  * @param \quiz_downloadquiz\local\grant_manager $grantmanager
  * @return void
  */
-function create_required_role(
+function quiz_downloadquiz_create_required_role(
     stdClass $definition,
     context_system $systemcontext,
     \quiz_downloadquiz\local\grant_manager $grantmanager
@@ -96,7 +95,7 @@ function create_required_role(
         $definition->description
     );
 
-    configure_required_role($roleid, $systemcontext, $grantmanager);
+    quiz_downloadquiz_configure_required_role($roleid, $systemcontext, $grantmanager);
 }
 
 /**
@@ -108,7 +107,7 @@ function create_required_role(
  * @param \quiz_downloadquiz\local\grant_manager $grantmanager
  * @return void
  */
-function update_required_role(
+function quiz_downloadquiz_update_required_role(
     stdClass $existingrole,
     stdClass $definition,
     context_system $systemcontext,
@@ -124,7 +123,7 @@ function update_required_role(
 
     $DB->update_record('role', $record);
 
-    configure_required_role((int)$existingrole->id, $systemcontext, $grantmanager);
+    quiz_downloadquiz_configure_required_role((int)$existingrole->id, $systemcontext, $grantmanager);
 }
 
 /**
@@ -135,7 +134,7 @@ function update_required_role(
  * @param \quiz_downloadquiz\local\grant_manager $grantmanager
  * @return void
  */
-function configure_required_role(
+function quiz_downloadquiz_configure_required_role(
     int $roleid,
     context_system $systemcontext,
     \quiz_downloadquiz\local\grant_manager $grantmanager
@@ -150,7 +149,7 @@ function configure_required_role(
         true
     );
 
-    ensure_manager_can_assign_role($roleid);
+    quiz_downloadquiz_ensure_manager_can_assign_role($roleid);
     set_config('grantroleid', $roleid, 'quiz_downloadquiz');
 
     $grantmanager->resync_active_grants_to_role($roleid);
@@ -164,7 +163,7 @@ function configure_required_role(
  * @param int $targetroleid
  * @return void
  */
-function ensure_manager_can_assign_role(int $targetroleid): void {
+function quiz_downloadquiz_ensure_manager_can_assign_role(int $targetroleid): void {
     global $DB;
 
     if ($targetroleid <= 0) {

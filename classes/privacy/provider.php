@@ -8,34 +8,47 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Privacy provider for quiz_downloadquiz.
  *
- * @package     quiz_downloadquiz
- * @copyright   2026 Center for Digital Innovation and Artificial Intelligence
- * @author      Center for Digital Innovation and Artificial Intelligence
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_downloadquiz
+ * @copyright 2026 Center for Digital Innovation and Artificial Intelligence <moodle.cinia@usj.edu.lb>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace quiz_downloadquiz\privacy;
 
+defined('MOODLE_INTERNAL') || die();
+
+use core_privacy\local\metadata\collection;
+
 /**
- * Privacy provider for a plugin that stores no personal data.
+ * Privacy provider for quiz_downloadquiz.
  */
-final class provider implements \core_privacy\local\metadata\null_provider {
-    /**
-     * Return the language string identifier that explains why the plugin
-     * stores no personal data.
-     *
-     * @return string
-     */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
+class provider implements \core_privacy\local\metadata\provider {
+
+    public static function get_metadata(collection $collection): collection {
+
+        $collection->add_database_table(
+            'quiz_downloadquiz_grants',
+            [
+                'userid' => 'privacy:metadata:quiz_downloadquiz_grants:userid',
+                'grantedby' => 'privacy:metadata:quiz_downloadquiz_grants:grantedby',
+                'timegranted' => 'privacy:metadata:quiz_downloadquiz_grants:timegranted',
+                'timeexpires' => 'privacy:metadata:quiz_downloadquiz_grants:timeexpires',
+                'enabled' => 'privacy:metadata:quiz_downloadquiz_grants:enabled',
+                'timecreated' => 'privacy:metadata:quiz_downloadquiz_grants:timecreated',
+                'timemodified' => 'privacy:metadata:quiz_downloadquiz_grants:timemodified',
+            ],
+            'privacy:metadata:quiz_downloadquiz_grants'
+        );
+
+        return $collection;
     }
 }

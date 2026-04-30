@@ -8,19 +8,18 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Quiz report implementation for quiz_downloadquiz.
  *
- * @package     quiz_downloadquiz
- * @copyright   2026 Center for Digital Innovation and Artificial Intelligence
- * @author      Center for Digital Innovation and Artificial Intelligence
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_downloadquiz
+ * @copyright 2026 Center for Digital Innovation and Artificial Intelligence <moodle.cinia@usj.edu.lb>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 use mod_quiz\local\reports\report_base;
@@ -111,7 +110,8 @@ class quiz_downloadquiz_report extends report_base {
 
         \quiz_downloadquiz\local\access_manager::validate_base($course, $cm, $quiz, $context);
 
-        $pdfkey = trim(optional_param('pdfkey', '', PARAM_RAW_TRIMMED));
+        $pdfkey = trim(optional_param('pdfkey', '', PARAM_ALPHANUMEXT));
+
         $this->validate_pdf_key($pdfkey);
 
         $extractor = new \quiz_downloadquiz\local\question_extractor();
@@ -417,6 +417,7 @@ class quiz_downloadquiz_report extends report_base {
      * @param \cm_info $cm The course module.
      * @return string
      */
+
     private function render_download_form(\cm_info $cm): string {
         global $OUTPUT, $PAGE;
 
@@ -427,234 +428,33 @@ class quiz_downloadquiz_report extends report_base {
             ['class' => 'req']
         );
 
-        $label = get_string('pdfkey', 'quiz_downloadquiz') .
-            \html_writer::span($requiredicon, 'ms-1');
+        $showiconurl = $OUTPUT->image_url('t/show')->out(false);
+        $hideiconurl = $OUTPUT->image_url('t/hide')->out(false);
 
-        $showicon = $OUTPUT->image_url('t/show')->out(false);
-        $hideicon = $OUTPUT->image_url('t/hide')->out(false);
-        $clienterror = addslashes(get_string('errorpdfkeyrequiredclient', 'quiz_downloadquiz'));
-        $keylengtherror = addslashes(get_string('errorpdfkeylength', 'quiz_downloadquiz'));
-
-        $PAGE->requires->js_init_code("
-(function() {
-    var form = document.querySelector('.quiz-downloadquiz-form');
-    var input = document.getElementById('id_pdfkey');
-    var generateBtn = document.getElementById('downloadquiz-generate-btn');
-    var toggleBtn = document.getElementById('downloadquiz-toggle-btn');
-    var errorBox = document.getElementById('id_pdfkey_error');
-
-    if (!form || !input || !generateBtn || !toggleBtn || !errorBox) {
-        return;
-    }
-
-    function generateKey(length) {
-        var upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-        var lower = 'abcdefghijkmnopqrstuvwxyz';
-        var numbers = '23456789';
-        var all = upper + lower + numbers;
-
-        function getRandomChar(set) {
-            return set.charAt(Math.floor(Math.random() * set.length));
-        }
-
-        var result = '';
-
-        // Ensure requirements.
-        result += getRandomChar(upper);
-        result += getRandomChar(numbers);
-
-        // Fill remaining.
-        for (var i = 2; i < length; i++) {
-            result += getRandomChar(all);
-        }
-
-        // Shuffle result.
-        return result.split('').sort(function() { return 0.5 - Math.random(); }).join('');
-    }
-
-    function showError(message) {
-        input.classList.add('is-invalid');
-        input.setAttribute('aria-invalid', 'true');
-        errorBox.textContent = message;
-        errorBox.style.display = 'block';
-    }
-
-    function clearError() {
-        input.classList.remove('is-invalid');
-        input.removeAttribute('aria-invalid');
-        errorBox.textContent = '';
-        errorBox.style.display = 'none';
-    }
-
-    if (input.value.trim() === '') {
-        input.value = generateKey(6);
-    }
-
-    generateBtn.addEventListener('click', function() {
-        input.value = generateKey(6);
-        clearError();
-        input.focus();
-        input.select();
-    });
-
-    toggleBtn.addEventListener('click', function() {
-        var isHidden = input.type === 'password';
-        var label = isHidden
-            ? toggleBtn.getAttribute('data-hide-label')
-            : toggleBtn.getAttribute('data-show-label');
-        var icon = isHidden ? '" . addslashes($hideicon) . "' : '" . addslashes($showicon) . "';
-
-        input.type = isHidden ? 'text' : 'password';
-        toggleBtn.setAttribute('title', label);
-        toggleBtn.setAttribute('aria-label', label);
-        toggleBtn.innerHTML = '<img src=\"' + icon + '\" class=\"icon\" alt=\"\" />';
-    });
-
-    input.addEventListener('input', function() {
-        if (input.value.trim() !== '') {
-            clearError();
-        }
-    });
-
-    form.addEventListener('submit', function(e) {
-        var value = input.value.trim();
-
-        if (value === '') {
-            e.preventDefault();
-            showError('" . $clienterror . "');
-            input.focus();
-            return false;
-        }
-
-        if (value.length < 6) {
-            e.preventDefault();
-            showError('" . $keylengtherror . "');
-            input.focus();
-            return false;
-        }
-
-        if (!/[A-Z]/.test(value)) {
-            e.preventDefault();
-            showError('" . $keylengtherror . "');
-            input.focus();
-            return false;
-        }
-
-        if (!/[0-9]/.test(value)) {
-            e.preventDefault();
-            showError('" . $keylengtherror . "');
-            input.focus();
-            return false;
-        }
-
-        clearError();
-        return true;
-    });
-})();
-");
-
-        $output = '';
-        $output .= \html_writer::start_tag('form', [
-            'method' => 'post',
-            'action' => new \moodle_url('/mod/quiz/report.php'),
-            'class' => 'quiz-downloadquiz-form',
-            'novalidate' => 'novalidate',
-        ]);
-
-        $output .= \html_writer::empty_tag('input', [
-            'type' => 'hidden',
-            'name' => 'id',
-            'value' => $cm->id,
-        ]);
-
-        $output .= \html_writer::empty_tag('input', [
-            'type' => 'hidden',
-            'name' => 'mode',
-            'value' => 'downloadquiz',
-        ]);
-
-        $output .= \html_writer::empty_tag('input', [
-            'type' => 'hidden',
-            'name' => 'download',
-            'value' => 1,
-        ]);
-
-        $output .= \html_writer::empty_tag('input', [
-            'type' => 'hidden',
-            'name' => 'sesskey',
-            'value' => sesskey(),
-        ]);
-
-        $output .= \html_writer::tag('label', $label, [
-            'for' => 'id_pdfkey',
-            'class' => 'form-label d-inline-flex align-items-center mb-1',
-        ]);
-
-        $output .= \html_writer::start_div('input-group mb-0', [
-            'style' => 'max-width: 800px;',
-        ]);
-
-        $output .= \html_writer::empty_tag('input', [
-            'type' => 'password',
-            'name' => 'pdfkey',
-            'id' => 'id_pdfkey',
-            'class' => 'form-control',
-            'autocomplete' => 'new-password',
-            'minlength' => 6,
-            'maxlength' => 32,
+        $templatedata = [
+            'actionurl' => (new \moodle_url('/mod/quiz/report.php'))->out(false),
+            'cmid' => $cm->id,
+            'sesskey' => sesskey(),
+            'label' => get_string('pdfkey', 'quiz_downloadquiz') .
+                \html_writer::span($requiredicon, 'ms-1'),
             'placeholder' => get_string('pdfkeyplaceholder', 'quiz_downloadquiz'),
-            'aria-describedby' => 'id_pdfkey_error downloadquiz-generate-btn downloadquiz-toggle-btn',
-            'aria-required' => 'true',
-        ]);
+            'generatelabel' => get_string('generatepdfkey', 'quiz_downloadquiz'),
+            'showlabel' => get_string('showpdfkey', 'quiz_downloadquiz'),
+            'hidelabel' => get_string('hidepdfkey', 'quiz_downloadquiz'),
+            'downloadlabel' => get_string('downloadpdf', 'quiz_downloadquiz'),
+            'generateicon' => $OUTPUT->pix_icon('t/reload', get_string('generatepdfkey', 'quiz_downloadquiz')),
+            'showicon' => $OUTPUT->pix_icon('t/show', get_string('showpdfkey', 'quiz_downloadquiz')),
+        ];
 
-        $output .= \html_writer::start_div('input-group-append');
+        $PAGE->requires->js_call_amd('quiz_downloadquiz/downloadform', 'init', [[
+            'showIcon' => $showiconurl,
+            'hideIcon' => $hideiconurl,
+            'showLabel' => get_string('showpdfkey', 'quiz_downloadquiz'),
+            'hideLabel' => get_string('hidepdfkey', 'quiz_downloadquiz'),
+            'requiredError' => get_string('errorpdfkeyrequiredclient', 'quiz_downloadquiz'),
+            'lengthError' => get_string('errorpdfkeylength', 'quiz_downloadquiz'),
+        ]]);
 
-        $output .= \html_writer::tag(
-            'button',
-            $OUTPUT->pix_icon('t/reload', get_string('generatepdfkey', 'quiz_downloadquiz')),
-            [
-                'type' => 'button',
-                'class' => 'btn btn-outline-secondary',
-                'id' => 'downloadquiz-generate-btn',
-                'title' => get_string('generatepdfkey', 'quiz_downloadquiz'),
-                'aria-label' => get_string('generatepdfkey', 'quiz_downloadquiz'),
-            ]
-        );
-
-        $output .= \html_writer::tag(
-            'button',
-            $OUTPUT->pix_icon('t/show', get_string('showpdfkey', 'quiz_downloadquiz')),
-            [
-                'type' => 'button',
-                'class' => 'btn btn-outline-secondary',
-                'id' => 'downloadquiz-toggle-btn',
-                'title' => get_string('showpdfkey', 'quiz_downloadquiz'),
-                'aria-label' => get_string('showpdfkey', 'quiz_downloadquiz'),
-                'data-show-label' => get_string('showpdfkey', 'quiz_downloadquiz'),
-                'data-hide-label' => get_string('hidepdfkey', 'quiz_downloadquiz'),
-            ]
-        );
-
-        $output .= \html_writer::end_div();
-        $output .= \html_writer::end_div();
-
-        $output .= \html_writer::div(
-            '',
-            'form-control-feedback invalid-feedback mt-1',
-            [
-                'id' => 'id_pdfkey_error',
-                'style' => 'display:none;',
-            ]
-        );
-
-        $output .= \html_writer::empty_tag('input', [
-            'type' => 'submit',
-            'class' => 'btn btn-primary mt-3',
-            'value' => get_string('downloadpdf', 'quiz_downloadquiz'),
-        ]);
-
-        $output .= \html_writer::end_tag('form');
-
-        return $output;
-    }
+        return $OUTPUT->render_from_template('quiz_downloadquiz/download_form', $templatedata);
+    }    
 }

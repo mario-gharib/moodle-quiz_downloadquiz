@@ -8,19 +8,18 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Admin management page for timed user grants.
  *
- * @package     quiz_downloadquiz
- * @copyright   2026 Center for Digital Innovation and Artificial Intelligence
- * @author      Center for Digital Innovation and Artificial Intelligence
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_downloadquiz
+ * @copyright 2026 Center for Digital Innovation and Artificial Intelligence <moodle.cinia@usj.edu.lb>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../../../config.php');
@@ -47,18 +46,18 @@ $download = optional_param('download', 0, PARAM_BOOL);
 $revokeuserid = optional_param('revoke', 0, PARAM_INT);
 
 $requiredrole = $DB->get_record('role', ['shortname' => 'downloadquizaccess'], '*', IGNORE_MISSING);
-redirect_if_required_role_missing($requiredrole);
+quiz_downloadquiz_redirect_if_required_role_missing($requiredrole);
 
-sync_grant_role_configuration($requiredrole, $grantmanager);
+quiz_downloadquiz_sync_grant_role_configuration($requiredrole, $grantmanager);
 
 if ($download) {
     require_sesskey();
-    export_active_grants_csv($grantmanager);
+    quiz_downloadquiz_export_active_grants_csv($grantmanager);
 }
 
 if ($revokeuserid > 0) {
     require_sesskey();
-    revoke_user_grant($grantmanager, $revokeuserid, $page);
+    quiz_downloadquiz_revoke_user_grant($grantmanager, $revokeuserid, $page);
 }
 
 $form = new \quiz_downloadquiz\form\grant_form();
@@ -68,10 +67,10 @@ if ($form->is_cancelled()) {
 }
 
 if ($data = $form->get_data()) {
-    process_grant_form_submission($grantmanager, $data, $page);
+    quiz_downloadquiz_process_grant_form_submission($grantmanager, $data, $page);
 }
 
-render_manage_page($form, $grantmanager, $page);
+quiz_downloadquiz_render_manage_page($form, $grantmanager, $page);
 
 /**
  * Redirect to plugin settings if the required timed-access role is missing.
@@ -79,7 +78,7 @@ render_manage_page($form, $grantmanager, $page);
  * @param stdClass|false $requiredrole
  * @return void
  */
-function redirect_if_required_role_missing($requiredrole): void {
+function quiz_downloadquiz_redirect_if_required_role_missing($requiredrole): void {
     if ($requiredrole) {
         return;
     }
@@ -99,7 +98,7 @@ function redirect_if_required_role_missing($requiredrole): void {
  * @param \quiz_downloadquiz\local\grant_manager $grantmanager
  * @return void
  */
-function sync_grant_role_configuration(
+function quiz_downloadquiz_sync_grant_role_configuration(
     stdClass $requiredrole,
     \quiz_downloadquiz\local\grant_manager $grantmanager
 ): void {
@@ -115,7 +114,7 @@ function sync_grant_role_configuration(
  * @param \quiz_downloadquiz\local\grant_manager $grantmanager
  * @return void
  */
-function export_active_grants_csv(\quiz_downloadquiz\local\grant_manager $grantmanager): void {
+function quiz_downloadquiz_export_active_grants_csv(\quiz_downloadquiz\local\grant_manager $grantmanager): void {
     $grants = $grantmanager->get_current_grants();
     $filename = userdate(time(), '%Y%m%d%H%M') . '-DownloadQuizActiveGrantsUsers-Confidential.csv';
 
@@ -160,7 +159,7 @@ function export_active_grants_csv(\quiz_downloadquiz\local\grant_manager $grantm
  * @param int $page
  * @return void
  */
-function revoke_user_grant(
+function quiz_downloadquiz_revoke_user_grant(
     \quiz_downloadquiz\local\grant_manager $grantmanager,
     int $userid,
     int $page
@@ -183,7 +182,7 @@ function revoke_user_grant(
  * @param int $page
  * @return void
  */
-function process_grant_form_submission(
+function quiz_downloadquiz_process_grant_form_submission(
     \quiz_downloadquiz\local\grant_manager $grantmanager,
     stdClass $data,
     int $page
@@ -227,7 +226,7 @@ function process_grant_form_submission(
  * @param int $page
  * @return void
  */
-function render_manage_page(
+function quiz_downloadquiz_render_manage_page(
     \quiz_downloadquiz\form\grant_form $form,
     \quiz_downloadquiz\local\grant_manager $grantmanager,
     int $page
@@ -256,7 +255,7 @@ function render_manage_page(
 
     $form->display();
 
-    echo render_download_csv_button();
+    echo quiz_downloadquiz_render_download_csv_button();
 
     echo html_writer::tag('h3', get_string('currentgrants', 'quiz_downloadquiz'));
 
@@ -275,7 +274,7 @@ function render_manage_page(
             \core\output\notification::NOTIFY_INFO
         );
     } else {
-        echo render_grants_table($grants, $page);
+        echo quiz_downloadquiz_render_grants_table($grants, $page);
     }
 
     if ($totalgrants > $perpage && !empty($grants)) {
@@ -293,7 +292,7 @@ function render_manage_page(
  *
  * @return string
  */
-function render_download_csv_button(): string {
+function quiz_downloadquiz_render_download_csv_button(): string {
     $downloadurl = new moodle_url('/mod/quiz/report/downloadquiz/manage.php', [
         'download' => 1,
         'sesskey' => sesskey(),
@@ -317,7 +316,7 @@ function render_download_csv_button(): string {
  * @param int $page
  * @return string
  */
-function render_grants_table(array $grants, int $page): string {
+function quiz_downloadquiz_render_grants_table(array $grants, int $page): string {
     $table = new html_table();
 
     $table->head = [

@@ -8,19 +8,18 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * English language strings for quiz report downloadquiz.
  *
- * @package    quiz_downloadquiz
- * @author     Mario Gharib <mario.gharib@usj.edu.lb | mario.gharib@hotmail.com>
- * @copyright  Mario Gharib 2026
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_downloadquiz
+ * @copyright 2026 Center for Digital Innovation and Artificial Intelligence <moodle.cinia@usj.edu.lb>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -101,7 +100,15 @@ $string['pdfkey'] = 'Insert an access key of at least 6 characters, 1 number, an
 $string['pdfkeyplaceholder'] = '6-character access key';
 $string['pdfkeywarning'] = 'Please save the access key securely. It will not be stored and cannot be recovered after the PDF is sent or if the page is refreshed.';
 $string['pluginname'] = 'Download quiz with answers';
-$string['privacy:metadata'] = 'The "Download quiz with answers" report does not store personal data.';
+$string['privacy:metadata'] = 'The "Download quiz with answers" report stores temporary access grants for users.';
+$string['privacy:metadata:quiz_downloadquiz_grants'] = 'Stores temporary access permissions for downloading quiz PDFs.';
+$string['privacy:metadata:quiz_downloadquiz_grants:userid'] = 'The user who is granted access.';
+$string['privacy:metadata:quiz_downloadquiz_grants:grantedby'] = 'The user who granted access.';
+$string['privacy:metadata:quiz_downloadquiz_grants:timegranted'] = 'The time when access was granted.';
+$string['privacy:metadata:quiz_downloadquiz_grants:timeexpires'] = 'The time when access expires.';
+$string['privacy:metadata:quiz_downloadquiz_grants:enabled'] = 'Whether the access is currently active.';
+$string['privacy:metadata:quiz_downloadquiz_grants:timecreated'] = 'Record creation timestamp.';
+$string['privacy:metadata:quiz_downloadquiz_grants:timemodified'] = 'Record last modification timestamp.';
 $string['qtypeessay'] = 'Essay questions';
 $string['qtypematch'] = 'Matching questions';
 $string['qtypemultichoice'] = 'Multiple choice questions';

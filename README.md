@@ -84,47 +84,6 @@ Timed Access Grants
 
 ---
 
-## Plugin Structure
-
-
-mod/quiz/report/downloadquiz/
-├── classes/
-│   ├── event/
-│   │   └── quiz_downloaded.php
-│   ├── form/
-│   │   └── grant_form.php
-│   ├── local/
-│   │   ├── access_manager.php
-│   │   ├── grant_manager.php
-│   │   ├── html_helper.php
-│   │   ├── pdf_builder.php
-│   │   └── question_extractor.php
-│   └── privacy/
-│       └── provider.php
-├── db/
-│   ├── access.php
-│   ├── install.php
-│   ├── install.xml
-│   ├── uninstall.php
-│   └── upgrade.php
-├── lang/
-│   ├── ar/
-│   │   └── quiz_downloadquiz.php
-│   ├── en/
-│   │   └── quiz_downloadquiz.php
-│   └── fr/
-│       └── quiz_downloadquiz.php
-├── createrole.php
-├── manage.php
-├── README.md
-├── report.php
-├── settings.php
-├── styles.css
-└── version.php
-
-
----
-
 ## Installation
 
 1. Place the plugin in: **/mod/quiz/report/downloadquiz**
